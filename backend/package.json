@@ -1,0 +1,44 @@
+{
+    "name": "bmi_calc__backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node ./dist/index.mjs",
+        "dev": "tsx watch ./src/index.ts",
+        "build": "pkgroll --minify"
+    },
+    "exports": {
+        "./src/**/*.ts": "./dist/**/*.mjs"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "packageManager": "pnpm@10.19.0",
+    "devDependencies": {
+        "@tsconfig/node22": "^22.0.2",
+        "@types/express": "^5.0.5",
+        "@types/node": "^24.9.2",
+        "drizzle-kit": "^0.31.6",
+        "pkgroll": "^2.20.1",
+        "tsx": "^4.20.6",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "@types/express-session": "^1.18.2",
+        "@types/passport-local": "^1.0.38",
+        "bcrypt": "^6.0.0",
+        "dotenv": "^17.2.3",
+        "drizzle-orm": "^0.44.7",
+        "express": "^5.1.0",
+        "express-session": "^1.18.2",
+        "mysql2": "^3.15.3",
+        "nodemon": "^3.1.10",
+        "passport-local": "^1.0.0",
+        "ts-node": "^10.9.2",
+        "zod": "^4.1.12"
+    }
+}

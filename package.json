@@ -1,0 +1,19 @@
+{
+  "name": "bmi_calc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:server": "cd ./backend && pnpm run dev",
+    "start:client": "cd ./client && pnpm run dev",
+    "start": "concurrently \"npm run start:client\" \"npm run start:server\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.19.0",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
