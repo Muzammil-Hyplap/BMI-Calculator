@@ -28,9 +28,11 @@
         "typescript": "^5.9.3"
     },
     "dependencies": {
+        "@types/cors": "^2.8.19",
         "@types/express-session": "^1.18.2",
         "@types/passport-local": "^1.0.38",
         "bcrypt": "^6.0.0",
+        "cors": "^2.8.5",
         "dotenv": "^17.2.3",
         "drizzle-orm": "^0.44.7",
         "express": "^5.1.0",

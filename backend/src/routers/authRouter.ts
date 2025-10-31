@@ -5,6 +5,7 @@ import { users } from "../db/schema.js";
 import { errorResp, successResp, validationErrorResp } from "../services/responses.js";
 import { hashPassword } from "../services/authentication.js";
 import passport from "passport";
+import { eq } from "drizzle-orm";
 
 const router: Router = Router();
 
@@ -38,13 +39,19 @@ router.post("/signin", async (req, res, next) => {
         if (err) return next(err);
         if (!user) return res.status(401).json({ message: info?.message || "Invalid credentials" });
 
-        req.logIn(user, (err) => {
+        req.logIn(user, async (err) => {
             if (err) return next(err);
 
-            res.json({
-                message: "Login successful",
-                user,
-            });
+            const [dbUser] = await db.select().from(users).where(eq(users.id, user.id));
+
+            res.json(
+                successResp("Login successful", {
+                    phone_no: dbUser?.phone_no,
+                    fname: dbUser?.fname,
+                    lname: dbUser?.lname,
+                    email: dbUser?.email,
+                })
+            );
         });
     })(req, res, next);
 });
