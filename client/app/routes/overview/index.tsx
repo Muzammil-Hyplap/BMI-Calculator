@@ -12,6 +12,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import type { Route } from "./+types";
 import { paths } from "@/paths";
 import { BMICalc } from "@/components/overview/bmi-calc";
+import dayjs, { Dayjs } from "dayjs";
 
 export const metadata = { title: `Overview | Dashboard | ${config.site.name}` };
 
@@ -23,7 +24,8 @@ export async function clientLoader({
     return data?.data
 }
 
-export default function Page({loaderData}:Route.ComponentProps): React.JSX.Element {
+export default function Page({ loaderData }: Route.ComponentProps): React.JSX.Element {
+    const { data, labels } = generateBMILineData(loaderData);
     return (
         <DashboardLayout>
             <Grid container spacing={3}>
@@ -71,8 +73,9 @@ export default function Page({loaderData}:Route.ComponentProps): React.JSX.Eleme
                 >
                     <Sales
                         chartSeries={[
-                            { name: 'This year', data: generateBMILineData(loaderData) },
+                            { name: 'This year', data },
                         ]}
+                        labels={labels}
                         sx={{ height: '100%' }}
                     />
                 </Grid>
@@ -93,7 +96,7 @@ export default function Page({loaderData}:Route.ComponentProps): React.JSX.Eleme
                         xs: 12,
                     }}
                 >
-                    <BMICalc/>
+                    <BMICalc />
                 </Grid>
                 <Grid
                     size={{
@@ -111,26 +114,36 @@ export default function Page({loaderData}:Route.ComponentProps): React.JSX.Eleme
     );
 }
 
-function generateBMILineData(loaderData:BMI[]){
-    const data = [];
-    const monthDataMap:Record<number, number> = {};
+export function generateBMILineData(loaderData: BMI[]) {
+    const data: number[] = []
+    const labels: string[] = []
 
-    loaderData.forEach((data:BMI)=>{
-        const date = new Date(data.createdAt);
-        monthDataMap[date.getMonth()] = data.bmi
-    })
+    loaderData.forEach(row => {
+        data.unshift(row.bmi)
+        const dateString = row.createdAt as unknown as string
+        labels.unshift(dayjs(dateString.split('T')[0]).format('DD/MM/YYYY'))
+    });
+    // const monthDataMap:Record<number, number> = {};
 
-    let prevData = 0
-    for(let i = 0; i < 12 ; i++){
-        if(monthDataMap[i]){
-            data.push(monthDataMap[i])
-            prevData = monthDataMap[i]
-            continue
-        }
+    // loaderData.forEach((data:BMI)=>{
+    //     const date = new Date(data.createdAt);
+    //     labels.push(dayjs(data.createdAt).format('DD/MM/YYYY'));
+    //     monthDataMap[date.getMonth()] = data.bmi
+    // })
+    //
+    // let prevData = 0
+    //
+    // for(let i = 0; i < 12 ; i++){
+    //     if(monthDataMap[i]){
+    //         data.push(monthDataMap[i])
+    //         prevData = monthDataMap[i]
+    //         continue
+    //     }
+    //
+    //     data.push(prevData);
+    // }
 
-        data.push(prevData);
-    }
-
-    return data
+    // console.log(data, labels);
+    return { data, labels }
 }
 

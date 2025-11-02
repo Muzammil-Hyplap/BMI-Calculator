@@ -36,7 +36,6 @@ export const initializePassport = (passport: passport.PassportStatic) => {
     passport.deserializeUser(function (id, cb) {
         process.nextTick(async function () {
             const [user] = await db.select().from(users).where(eq(users.id, id as string));
-            console.log(user)
 
             if(user){
                 const expUser:Express.User = {

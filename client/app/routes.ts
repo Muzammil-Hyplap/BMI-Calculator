@@ -4,4 +4,5 @@ export default [
     index("routes/overview/index.tsx"),
     route("/sign-in", 'routes/auth/sign-in.tsx'),
     route("/sign-up", 'routes/auth/sign-up.tsx'),
+    route('*', 'not-found.tsx')
 ] satisfies RouteConfig;

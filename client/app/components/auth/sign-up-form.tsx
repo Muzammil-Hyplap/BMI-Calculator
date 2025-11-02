@@ -16,8 +16,6 @@ import z, { z as zod } from 'zod';
 
 import { paths } from '@/paths';
 import { useNavigate } from 'react-router';
-import useUser from '@/stores/user';
-// import { useUser } from '@/hooks/use-user';
 
 export const registerSchema = z
     .object({
@@ -39,6 +37,7 @@ export const registerSchema = z
             .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[#?!@$%^&*-]).{8,}$/),
         confirm_password: z.string().trim().min(1, { error: "Confirm Password is required" }),
     })
+
     // .superRefine((data, ctx) => {
     //     if (data.confirm_password !== data.password) {
     //         ctx.addIssue({
@@ -61,20 +60,28 @@ export function SignUpForm(): React.JSX.Element {
         handleSubmit,
         setError,
         formState: { errors },
-    } = useForm<Values>({ resolver: zodResolver(registerSchema)});
+    } = useForm<Values>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            password:"",
+            confirm_password:"",
+            fname:"",
+            lname:"",
+            email:"",
+            phone_no:"",
+        },
+    });
 
     const onSubmit = React.useCallback(
         async (values: Values): Promise<void> => {
             try {
                 setIsPending(true);
 
+                const formData = new FormData(document.getElementById("sign-up-form") as HTMLFormElement);
                 const rawRes = await fetch(import.meta.env.VITE_API_URL + "/signup", {
                     method: "POST",
-                    body: JSON.stringify(values),
+                    body: formData,
                     credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
                 });
                 // console.log(rawRes)
 
@@ -111,8 +118,13 @@ export function SignUpForm(): React.JSX.Element {
                 </Typography>
             </Stack>
 
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} id="sign-up-form" encType='multiplart/form-data'>
                 <Stack spacing={2}>
+                    <FormControl>
+                        <InputLabel>Avatar</InputLabel>
+                        <OutlinedInput label="Avatar" type="file" name="avatar" />
+                        {/* {errors.fname ? <FormHelperText>{errors.fname.message}</FormHelperText> : null} */}
+                    </FormControl>
                     <Controller
                         control={control}
                         name="fname"
@@ -140,8 +152,8 @@ export function SignUpForm(): React.JSX.Element {
                         name="email"
                         render={({ field }) => (
                             <FormControl error={Boolean(errors.email)}>
-                                <InputLabel>Phone Number</InputLabel>
-                                <OutlinedInput {...field} label="Phone Number" type="phone_no" />
+                                <InputLabel>Email</InputLabel>
+                                <OutlinedInput {...field} label="Email"  />
                                 {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
                             </FormControl>
                         )}

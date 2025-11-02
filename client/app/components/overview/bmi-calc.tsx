@@ -46,14 +46,18 @@ export function BMICalc({ sx }: { sx?: SxProps }) {
 }
 
 const bmiCalcSchema = z.object({
-    height: z.string().min(1, { error: 'Height is required' }).max(7).regex(/^[0-9]+\.?[0-9]{0,2}$/),
-    weight: z.string().min(1, { error: 'Weight is required' }).max(7).regex(/^[0-9]+\.?[0-9]{0,2}$/),
+    height: z.string({error:"Height must be a number"}).min(1, { error: 'Height is required' }).max(7).regex(/^[0-9]+\.?[0-9]{0,2}$/),
+    weight: z.string({error:"Weight must be a number"}).min(1, { error: 'Weight is required' }).max(7).regex(/^[0-9]+\.?[0-9]{0,2}$/),
 })
 
 type BmiCalc = z.infer<typeof bmiCalcSchema>
 
 function BMICalcForm() {
-    const { control, handleSubmit, formState: { isLoading, errors }, setError, getValues } = useForm<BmiCalc>({ resolver: zodResolver(bmiCalcSchema), mode: 'onChange' })
+    const { control, handleSubmit, formState: { isLoading, errors }, setError, getValues } = useForm<BmiCalc>({
+        resolver: zodResolver(bmiCalcSchema), mode: 'onChange',
+        defaultValues:{height:"", weight:""}
+    })
+
     const [bmi, setBMI] = useState<Number>(0);
     const theme = useTheme()
     const [successMessage, setSuccessMessage] = useState('')
@@ -141,7 +145,7 @@ function BMICalcForm() {
                     />
 
                     <Typography sx={{ border: '1px solid ' + theme.palette.divider, padding: '1em', borderRadius: '.55em' }}>
-                        {bmi.toFixed(2)}
+                        BMI: {bmi.toFixed(2)}
                     </Typography>
 
                     {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}

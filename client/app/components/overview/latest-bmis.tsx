@@ -74,17 +74,17 @@ export default function LatestBMIs({ loaderData = [], sx }: LatestBMIsProps): Re
                     </TableBody>
                 </Table>
             </Box>
-            <Divider />
-            <CardActions sx={{ justifyContent: 'flex-end' }}>
-                <Button
-                    color="inherit"
-                    endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />}
-                    size="small"
-                    variant="text"
-                >
-                    View all
-                </Button>
-            </CardActions>
+            {/* <Divider /> */}
+            {/* <CardActions sx={{ justifyContent: 'flex-end' }}> */}
+            {/*     <Button */}
+            {/*         color="inherit" */}
+            {/*         endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} */}
+            {/*         size="small" */}
+            {/*         variant="text" */}
+            {/*     > */}
+            {/*         View all */}
+            {/*     </Button> */}
+            {/* </CardActions> */}
         </Card>
     );
 }
