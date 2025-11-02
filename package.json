@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:server": "cd ./backend && pnpm run dev",
+    "start:studio": "cd ./backend && pnpm drizzle-kit studio",
     "start:client": "cd ./client && pnpm run dev",
-    "start": "concurrently \"npm run start:client\" \"npm run start:server\""
+    "start": "concurrently \"npm run start:studio\" \"npm run start:client\" \"npm run start:server\""
   },
   "keywords": [],
   "author": "",

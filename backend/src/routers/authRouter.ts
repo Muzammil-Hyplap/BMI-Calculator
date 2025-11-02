@@ -2,7 +2,7 @@ import { Router } from "express";
 import z from "zod";
 import { db } from "../db/index.js";
 import { users } from "../db/schema.js";
-import { errorResp, successResp, validationErrorResp } from "../services/responses.js";
+import { successResp, validationErrorResp } from "../services/responses.js";
 import { hashPassword } from "../services/authentication.js";
 import passport from "passport";
 import { eq } from "drizzle-orm";
@@ -54,6 +54,13 @@ router.post("/signin", async (req, res, next) => {
             );
         });
     })(req, res, next);
+});
+
+router.post('/signout', passport.authenticate('session'),async (req, res, next) => {
+    req.logOut(function(err) {
+        if (err) return next(err)
+        res.json(successResp('Successfully Logged Out'));
+    })
 });
 
 export const loginSchema = z.object({

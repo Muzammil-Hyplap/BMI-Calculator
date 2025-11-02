@@ -8,5 +8,10 @@ export const paths = {
     integrations: '/dashboard/integrations',
     settings: '/dashboard/settings',
   },
+  api:{
+      get:{
+          bmi:'/bmi',
+      }
+  },
   errors: { notFound: '/errors/not-found' },
 } as const;

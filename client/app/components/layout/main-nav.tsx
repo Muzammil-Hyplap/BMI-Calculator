@@ -14,11 +14,13 @@ import { usePopover } from '@/hooks/use-popover';
 
 import { MobileNav } from './mobile-nav';
 import { UserPopover } from './user-popover';
+import useUser from '@/stores/user';
 
 export function MainNav(): React.JSX.Element {
   const [openNav, setOpenNav] = React.useState<boolean>(false);
 
   const userPopover = usePopover<HTMLDivElement>();
+  const user = useUser(user=>user)
 
   return (
     <React.Fragment>
@@ -65,12 +67,12 @@ export function MainNav(): React.JSX.Element {
                 </IconButton>
               </Badge>
             </Tooltip>
-            {/* <Avatar
+             <Avatar
               onClick={userPopover.handleOpen}
               ref={userPopover.anchorRef}
-              src="/assets/avatar.png"
+              src={user.avatar ?? ''}
               sx={{ cursor: 'pointer' }}
-            /> */}
+            /> 
           </Stack>
         </Stack>
       </Box>

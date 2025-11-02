@@ -28,10 +28,10 @@ app.use(session({
 
 app.use("/api/v1", authRouter)
 
-app.use((req,res,next)=>{
-  console.log('cookies', req)
-  next()
-})
+// app.use((req,res,next)=>{
+//   console.log('cookies', req)
+//   next()
+// })
 app.use(passport.authenticate('session'));
 app.use('/api/v1/bmi', bmiRouter);
 app.use('/api/v1/user', userRouter);

@@ -1,86 +1,100 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
-import dayjs from "dayjs";
-
 import { config } from "@/config";
 import { Budget } from "@/components/overview/budget";
-import { LatestOrders } from "@/components/overview/latest-orders";
+import LatestBMIs, { type BMI } from "@/components/overview/latest-bmis";
 import { Sales } from "@/components/overview/sales";
 import { TasksProgress } from "@/components/overview/tasks-progress";
 import { TotalCustomers } from "@/components/overview/total-customers";
 import { TotalProfit } from "@/components/overview/total-profit";
 import { Traffic } from "@/components/overview/traffic";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { redirect, useNavigate, type MiddlewareFunction } from "react-router";
 import type { Route } from "./+types";
-import useUser from "@/stores/user";
+import { paths } from "@/paths";
+import { BMICalc } from "@/components/overview/bmi-calc";
 
 export const metadata = { title: `Overview | Dashboard | ${config.site.name}` };
 
-export default function Page(): React.JSX.Element {
+export async function clientLoader({
+    params,
+}: Route.ClientLoaderArgs) {
+    const data = await (await fetch(import.meta.env.VITE_API_URL + paths.api.get.bmi + '?limit=10')).json();
+
+    return data?.data
+}
+
+export default function Page({loaderData}:Route.ComponentProps): React.JSX.Element {
     return (
         <DashboardLayout>
             <Grid container spacing={3}>
+                {/* <Grid */}
+                {/*     size={{ */}
+                {/*         lg: 3, */}
+                {/*         sm: 6, */}
+                {/*         xs: 12, */}
+                {/*     }} */}
+                {/* > */}
+                {/*     <Budget diff={12} trend="up" sx={{ height: "100%" }} value="$24k" /> */}
+                {/* </Grid> */}
+                {/* <Grid */}
+                {/*     size={{ */}
+                {/*         lg: 3, */}
+                {/*         sm: 6, */}
+                {/*         xs: 12, */}
+                {/*     }} */}
+                {/* > */}
+                {/*     <TotalCustomers diff={16} trend="down" sx={{ height: "100%" }} value="1.6k" /> */}
+                {/* </Grid> */}
+                {/* <Grid */}
+                {/*     size={{ */}
+                {/*         lg: 3, */}
+                {/*         sm: 6, */}
+                {/*         xs: 12, */}
+                {/*     }} */}
+                {/* > */}
+                {/*     <TasksProgress sx={{ height: "100%" }} value={75.5} /> */}
+                {/* </Grid> */}
+                {/* <Grid */}
+                {/*     size={{ */}
+                {/*         lg: 3, */}
+                {/*         sm: 6, */}
+                {/*         xs: 12, */}
+                {/*     }} */}
+                {/* > */}
+                {/*     <TotalProfit sx={{ height: "100%" }} value="$15k" /> */}
+                {/* </Grid> */}
                 <Grid
                     size={{
-                        lg: 3,
-                        sm: 6,
+                        lg: 6,
                         xs: 12,
                     }}
                 >
-                    <Budget diff={12} trend="up" sx={{ height: "100%" }} value="$24k" />
+                    <Sales
+                        chartSeries={[
+                            { name: 'This year', data: generateBMILineData(loaderData) },
+                        ]}
+                        sx={{ height: '100%' }}
+                    />
                 </Grid>
+                {/* <Grid */}
+                {/*     size={{ */}
+                {/**/}
+                {/*         lg: 4, */}
+                {/*         md: 6, */}
+                {/*         xs: 12, */}
+                {/*     }} */}
+                {/* > */}
+                {/*     <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} /> */}
+                {/* </Grid> */}
                 <Grid
                     size={{
-                        lg: 3,
-                        sm: 6,
+                        lg: 6,
+                        md: 12,
                         xs: 12,
                     }}
                 >
-                    <TotalCustomers diff={16} trend="down" sx={{ height: "100%" }} value="1.6k" />
+                    <BMICalc/>
                 </Grid>
-                <Grid
-                    size={{
-                        lg: 3,
-                        sm: 6,
-                        xs: 12,
-                    }}
-                >
-                    <TasksProgress sx={{ height: "100%" }} value={75.5} />
-                </Grid>
-                <Grid
-                    size={{
-                        lg: 3,
-                        sm: 6,
-                        xs: 12,
-                    }}
-                >
-                    <TotalProfit sx={{ height: "100%" }} value="$15k" />
-                </Grid>
-                {/* <Grid
-        size={{
-          lg: 8,
-          xs: 12,
-        }}
-      >
-        <Sales
-          chartSeries={[
-            { name: 'This year', data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20] },
-            { name: 'Last year', data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13] },
-          ]}
-          sx={{ height: '100%' }}
-        />
-      </Grid> */}
-                {/* <Grid
-        size={{
-
-          lg: 4,
-          md: 6,
-          xs: 12,
-        }}
-      >
-        <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
-      </Grid> */}
                 <Grid
                     size={{
                         lg: 12,
@@ -88,52 +102,8 @@ export default function Page(): React.JSX.Element {
                         xs: 12,
                     }}
                 >
-                    <LatestOrders
-                        orders={[
-                            {
-                                id: "ORD-007",
-                                customer: { name: "Ekaterina Tankova" },
-                                amount: 30.5,
-                                status: "pending",
-                                createdAt: dayjs().subtract(10, "minutes").toDate(),
-                            },
-                            {
-                                id: "ORD-006",
-                                customer: { name: "Cao Yu" },
-                                amount: 25.1,
-                                status: "delivered",
-                                createdAt: dayjs().subtract(10, "minutes").toDate(),
-                            },
-                            {
-                                id: "ORD-004",
-                                customer: { name: "Alexa Richardson" },
-                                amount: 10.99,
-                                status: "refunded",
-                                createdAt: dayjs().subtract(10, "minutes").toDate(),
-                            },
-                            {
-                                id: "ORD-003",
-                                customer: { name: "Anje Keizer" },
-                                amount: 96.43,
-                                status: "pending",
-                                createdAt: dayjs().subtract(10, "minutes").toDate(),
-                            },
-                            {
-                                id: "ORD-002",
-                                customer: { name: "Clarke Gillebert" },
-                                amount: 32.54,
-                                status: "delivered",
-                                createdAt: dayjs().subtract(10, "minutes").toDate(),
-                            },
-                            {
-                                id: "ORD-001",
-                                customer: { name: "Adam Denisov" },
-                                amount: 16.76,
-                                status: "delivered",
-                                createdAt: dayjs().subtract(10, "minutes").toDate(),
-                            },
-                        ]}
-                        sx={{ height: "100%" }}
+                    <LatestBMIs
+                        loaderData={loaderData}
                     />
                 </Grid>
             </Grid>
@@ -141,27 +111,26 @@ export default function Page(): React.JSX.Element {
     );
 }
 
-export const authMiddleware: Route.ClientMiddlewareFunction = async function ({ context, request }, next) {
-    const res = await (
-        await fetch(import.meta.env.VITE_API_URL + "/user", {
-            credentials: "include",
-        })
-    ).json();
+function generateBMILineData(loaderData:BMI[]){
+    const data = [];
+    const monthDataMap:Record<number, number> = {};
 
-    if (res?.success) {
-        const guestRoutes = ["sign-in", "sign-up"];
+    loaderData.forEach((data:BMI)=>{
+        const date = new Date(data.createdAt);
+        monthDataMap[date.getMonth()] = data.bmi
+    })
 
-        let suffix: string | string[] = request.url.split("/");
-        suffix = suffix[suffix.length - 1];
-
-        if (guestRoutes.includes(suffix)) {
-            throw ('/');
+    let prevData = 0
+    for(let i = 0; i < 12 ; i++){
+        if(monthDataMap[i]){
+            data.push(monthDataMap[i])
+            prevData = monthDataMap[i]
+            continue
         }
 
-        return next();
+        data.push(prevData);
     }
 
-    throw redirect("/sign-in");
-};
+    return data
+}
 
-// export const clientMiddleware: Route.ClientMiddlewareFunction[] = [authMiddleware];

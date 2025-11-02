@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts } from "react-router";
+import { isRouteErrorResponse, Links, Meta, Outlet, redirect, Scripts } from "react-router";
 import type { Route } from "./+types/root";
 import { createTheme } from "./styles/theme/create-theme";
 import { ThemeProvider } from "@mui/material/styles";
@@ -29,7 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </head>
             <body style={{ margin: 0 }}>
-                <ThemeProvider theme={theme} disableTransitionOnChange defaultMode="dark">
+                <ThemeProvider theme={theme} disableTransitionOnChange defaultMode="light">
                     {children}
                 </ThemeProvider>
                 <Scripts />
@@ -67,3 +67,32 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         </main>
     );
 }
+
+export const authMiddleware: Route.ClientMiddlewareFunction = async function ({ context, request }, next) {
+    const res = await (
+        await fetch(import.meta.env.VITE_API_URL + "/user", {
+            credentials: "include",
+        })
+    ).json();
+
+    const guestRoutes = ["sign-in", "sign-up"];
+    let suffix: string | string[] = request.url.split("/");
+    suffix = suffix[suffix.length - 1];
+
+    if (res?.success) {
+
+        if (guestRoutes.includes(suffix)) {
+            throw redirect('/');
+        }
+
+        return next();
+    }
+
+    if (guestRoutes.includes(suffix)) {
+        return next();
+    }
+
+    throw redirect("/sign-in");
+};
+
+export const clientMiddleware: Route.ClientMiddlewareFunction[] = [authMiddleware];
